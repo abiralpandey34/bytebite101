@@ -9,8 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        light: {
+          fg: "var(--color-fg)",
+          fgWhite: "var(--color-fg-white)",
+          bg: "var(--color-bg)",
+          fadeText: "var(--color-fade-text)",
+          theme: "var(--color-theme)",
+          lightTheme: "var(--color-theme-fade)",
+        },
+
+        dark: {
+          fg: "var(--color-fg)",
+          bg: "var(--color-bg)",
+          fadeText: "var(--color-fade-text)",
+        },
       },
     },
   },
