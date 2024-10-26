@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id       String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  password_hash String
+  user_avatar   String
+  user_roles    String[] // Storing roles as an array of strings
+
+  ExamAnswers     ExamAnswers[]
+  UserExamHistory UserExamHistory[]
+}
+
+model Category {
+  category_id String  @id @default(uuid())
+  name        String
+  image_url   String
+  parent_id   String? // Optional field for parent category
+
+  parent        Category?  @relation("CategoryHierarchy", fields: [parent_id], references: [category_id])
+  subcategories Category[] @relation("CategoryHierarchy")
+  exams         Exam[]     @relation("CategoryToExam")
+}
+
+model Exam {
+  exam_id          String   @id @default(uuid())
+  exam_name        String
+  exam_description String
+  exam_duration    DateTime
+  exam_difficulty  String
+  image_url        String
+  category_id      String
+
+  category Category @relation("CategoryToExam", fields: [category_id], references: [category_id])
+
+  questions       Question[]        @relation("ExamToQuestions")
+  ExamAnswers     ExamAnswers[]
+  UserExamHistory UserExamHistory[]
+}
+
+model Question {
+  question_id String @id @default(uuid())
+  title       String
+  exam_id     String
+  exam        Exam   @relation("ExamToQuestions", fields: [exam_id], references: [exam_id])
+
+  attachments QuestionAttachment[]
+  ExamAnswers ExamAnswers[]
+}
+
+model Answer {
+  answer_id  String  @id @default(uuid())
+  title      String
+  is_correct Boolean
+
+  attachments AnswerAttachment[]
+  ExamAnswers ExamAnswers[]
+}
+
+model QuestionAttachment {
+  id          String @id @default(uuid())
+  file_url    String
+  question_id String
+
+  question Question @relation(fields: [question_id], references: [question_id])
+}
+
+model AnswerAttachment {
+  id        String @id @default(uuid())
+  file_url  String
+  answer_id String
+
+  answer Answer @relation(fields: [answer_id], references: [answer_id])
+}
+
+model ExamAnswers {
+  user_id     String
+  exam_id     String
+  question_id String
+  answer_id   String
+
+  user     User     @relation(fields: [user_id], references: [user_id])
+  exam     Exam     @relation(fields: [exam_id], references: [exam_id])
+  question Question @relation(fields: [question_id], references: [question_id])
+  answer   Answer   @relation(fields: [answer_id], references: [answer_id]) // Reference to 'answer_id' in Answer model
+
+  @@id([user_id, exam_id, question_id]) // Composite primary key
+}
+
+model UserExamHistory {
+  user_id String
+  exam_id String
+  date    DateTime
+  marks   Float
+
+  // Relations
+  user User @relation(fields: [user_id], references: [user_id])
+  exam Exam @relation(fields: [exam_id], references: [exam_id])
+
+  @@id([user_id, exam_id]) // Composite primary key
+}

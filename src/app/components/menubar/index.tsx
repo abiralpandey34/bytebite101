@@ -21,6 +21,10 @@ const tabs = [
     {
         name: "Video",
         path: "/video-tuts",
+    },
+    {
+        name: "Roadmap",
+        path: "/roadmap",
     }
 ]
 

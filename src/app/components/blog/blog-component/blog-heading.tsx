@@ -6,16 +6,16 @@ export const BlogH1 = ({node}:any) => {
     </div>
 }
 
-export const BlogH2 = ({node}:any) => {
-    return <div className="w-full py-3">
+export const BlogH2 = ({node, id}:any) => {
+    return <div className="w-full py-3" id={id}>
         {node.map((textObj: any, textIndex: any) => (
         <h2 className="text-3xl font-semibold" key={textIndex}>{textObj.value}</h2>
         ))}
     </div>
 }
 
-export const BlogH3 = ({node}:any) => {
-    return <div className="w-full py-3">
+export const BlogH3 = ({node, id}:any) => {
+    return <div className="w-full py-3" id={id}>
         {node.map((textObj: any, textIndex: any) => (
         <h3 className="text-2xl font-semibold" key={textIndex}>{textObj.value}</h3>
         ))}

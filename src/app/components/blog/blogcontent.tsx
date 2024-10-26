@@ -1,9 +1,6 @@
-import { Key } from "react";
 import { BlogParagraph } from "./blog-component/blog-paragraph";
 import { BlogImg } from "./blog-component/blog-img";
-import { BlogTable } from "./blog-component/blog-table";
 import { BlogH1, BlogH2, BlogH3, BlogH4, BlogH5, BlogH6 } from "./blog-component/blog-heading";
-
 
 export const BlogContent = (content:any) => {
     const contents = content?.content?.content || [];
@@ -36,11 +33,11 @@ export const BlogContent = (content:any) => {
           break;
 
         case "heading-2":
-          comp = <BlogH2 node={node.content} />;
+          comp = <BlogH2 node={node.content} id={node.id} />;
           break;
 
         case "heading-3":
-          comp = <BlogH3 node={node.content} />;
+          comp = <BlogH3 node={node.content} id={node.id} />;
           break;
 
         case "heading-4":

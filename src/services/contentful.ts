@@ -1,5 +1,6 @@
 import * as contentful from "contentful"
 import _ from "lodash";
+import { generateUID } from "./utils";
 
 
 export const contentfulClient = contentful.createClient({
@@ -34,6 +35,7 @@ export const getLatestBlogs = async ()=>{
     try {
         const blogDetails = await contentfulClient.getEntries({
           content_type: 'pageBlogPost',
+          limit:3
         })
 
         return blogDetails?.items?.map((item)=>item?.fields);
@@ -44,7 +46,6 @@ export const getLatestBlogs = async ()=>{
 
 export const getFeaturedImageFromBlog = (blog:any)=>{
     try {
-        // console.log(blog?.featuredImage?.fields?.file)
        return `https:${blog?.featuredImage?.fields?.file?.url}`;
     } catch (error) {
         console.error("error: ", error);
@@ -65,5 +66,56 @@ export const getBlogDetails = async (slug:string)=>{
         // console.log("items: ", blog);
     } catch (error) {
         console.error("error: ", error);
+    }
+}
+
+export const buildBlog = async(blog: any) => {
+    try{
+        const headingMaps: any[] = [];
+        let updatedBlog = blog;
+    
+        updatedBlog.fields.content.content.forEach((contentPiece: any, index: number)=>{
+          if(contentPiece.nodeType==="heading-2"){
+            const id = generateUID();
+            contentPiece.id = id;
+            const headingTitle = contentPiece.content[0]?.value || "";
+            let subHeadings = [];
+            
+            for(let i=index+1; i<blog.fields.content.content.length; i++){
+              const subContent = blog.fields.content.content[i];
+              
+              if(subContent.nodeType==='heading-2') {
+                break;
+              }
+    
+              if(subContent.nodeType==='heading-3'){
+                const id = generateUID();
+                subContent.id = id;
+                const title = subContent.content[0]?.value || "";
+                subHeadings.push({
+                  id, 
+                  title
+                })
+              }
+            }
+    
+            headingMaps.push({
+              id,
+              title: headingTitle,
+              children: subHeadings
+            })
+          }
+        })
+    
+        return {
+            blog: updatedBlog,
+            headingMaps, 
+        }
+    }
+    catch(error){
+        return {
+            blog,
+            headingMaps: null
+        };
     }
 }

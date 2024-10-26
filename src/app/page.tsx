@@ -1,3 +1,5 @@
+'use client'
+
 import _ from "lodash";
 import Link from "next/link";
 import { getFeaturedBlog, getLatestBlogs } from "@/services/contentful";
@@ -6,15 +8,24 @@ import { Minicard } from "./components/card/minicard";
 import * as contentful from "contentful"
 import { Frontcard } from "./components/card/frontcard";
 import { Card } from "./components/card";
+import { Footer } from "./components/footer";
+import { Menubar } from "./components/menubar";
+import { Navbar } from "./components/navbar";
+import { getLoggedInUserDetails } from "@/services/api";
+import { useEffect } from "react";
 
 
 const Home = async() => {
   const featuredBlog: any = await getFeaturedBlog();
   const latestBlogs: any = await getLatestBlogs();
 
-  // console.log("Latest Blog", latestBlogs)
-  
   return (
+
+    <div>
+      
+    <Navbar />
+    <Menubar />
+
     <div>
       <div className="w-11/12 sm:w-4/5 mx-auto flex flex-col md:flex-row">
           <div className="w-full md:w-8/12">
@@ -43,6 +54,10 @@ const Home = async() => {
             }
         </div>
     </div>
+    <Footer/>
+
+    </div>
+
   );
 }
 export default Home;
